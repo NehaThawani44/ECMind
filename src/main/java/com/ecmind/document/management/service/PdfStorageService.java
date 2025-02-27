@@ -1,5 +1,6 @@
 package com.ecmind.document.management.service;
 
+import com.ecmind.document.management.exception.PdfNotFoundException;
 import com.ecmind.document.management.model.PdfMetadata;
 import com.ecmind.document.management.repository.PdfRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,6 @@ public class PdfStorageService {
     public PdfMetadata store(MultipartFile file) {
         try {
             PdfMetadata entity = new PdfMetadata();
-
             entity.setFileName(file.getOriginalFilename());
             entity.setUploadDate(new Date());
             entity.setData(file.getBytes());
@@ -36,24 +36,37 @@ public class PdfStorageService {
     }
 
     public List<PdfMetadata> getAllPdfs() {
-        return new ArrayList<>(metadataStorage.values());
+        //return new ArrayList<>(metadataStorage.values());
+        return pdfRepository.findAll();
     }
 
-    public byte[] getPdfById(String pdfId) {
-        Long id = Long.parseLong(pdfId);
-        PdfMetadata entity = pdfRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("PDF not found with id: " + pdfId));
-        return entity.getData();
+//    public byte[] getPdfById(String pdfId) {
+//        Long id = Long.parseLong(pdfId);
+//        PdfMetadata entity = pdfRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("PDF not found with id: " + pdfId));
+//        return entity.getData();
+//    }
+
+
+    public byte[] getPdfById(Long pdfId) {
+        try {
+            //Long id = Long.parseLong(pdfId);
+            PdfMetadata entity = pdfRepository.findById(pdfId)
+                    .orElseThrow(() -> new PdfNotFoundException("PDF not found with id: " + pdfId));
+            return entity.getData();
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Invalid ID format: " + pdfId, e);  // Add more context
+        }
     }
 
-    public void updatePdf(String pdfId, byte[] newData) {
+    public void updatePdf(Long pdfId, byte[] newData) {
         if (!pdfStorage.containsKey(pdfId)) {
             throw new RuntimeException("PDF not found with id: " + pdfId);
         }
-        pdfStorage.put(pdfId, newData);
+        pdfStorage.put(pdfId.toString(), newData);
     }
 
-    public void deletePdf(String pdfId) {
+    public void deletePdf(Long pdfId) {
         pdfStorage.remove(pdfId);
         metadataStorage.remove(pdfId);
     }
