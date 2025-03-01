@@ -22,48 +22,47 @@ import java.util.Optional;
 
 @Service
 public class PdfServiceFacade {
-    @Autowired
-    private PdfUploadService pdfUploadService;
+	@Autowired
+	private PdfUploadService pdfUploadService;
 
-    @Autowired
-    private PdfStorageService pdfStorageService;
+	@Autowired
+	private PdfStorageService pdfStorageService;
 
-    @Autowired
-    private PdfRenderingService pdfRenderingService;
+	@Autowired
+	private PdfRenderingService pdfRenderingService;
 
-    @Autowired
-    private PdfStampService pdfStampService;
+	@Autowired
+	private PdfStampService pdfStampService;
 
-    @Autowired
-    private PdfRepository pdfRepository;
+	@Autowired
+	private PdfRepository pdfRepository;
 
-    public void uploadPdf(MultipartFile file) {
-        pdfUploadService.upload(file);
-    }
+	public void uploadPdf(MultipartFile file) {
+		pdfUploadService.upload(file);
+	}
 
-    public List<PdfMetadata> listPdfs() {
-        return pdfStorageService.getAllPdfs();
-    }
+	public List<PdfMetadata> listPdfs() {
+		return pdfStorageService.getAllPdfs();
+	}
 
-    public byte[] getPdfById(Long pdfId) {
-        // Fetch the PDF from the repository or storage
-        // If you're using a database, you might have a method like this:
-        Optional<PdfMetadata> pdfMetadata = pdfRepository.findById(pdfId);
+	public byte[] getPdfById(Long pdfId) {
+		// Fetch the PDF from the repository or storage
+		// If you're using a database, you might have a method like this:
+		Optional<PdfMetadata> pdfMetadata = pdfRepository.findById(pdfId);
 
-        // Check if the PDF exists
-        if (pdfMetadata.isPresent()) {
-            // If found, return the PDF data (stored as a byte array in your repository)
-            return pdfMetadata.get().getData(); // Assuming PDF data is stored as byte[]
-        } else {
-            throw new RuntimeException("PDF not found with id: " + pdfId);
-        }
-    }
+		// Check if the PDF exists
+		if (pdfMetadata.isPresent()) {
+			// If found, return the PDF data (stored as a byte array in your repository)
+			return pdfMetadata.get().getData(); // Assuming PDF data is stored as byte[]
+		} else {
+			throw new RuntimeException("PDF not found with id: " + pdfId);
+		}
+	}
 
-
-    public byte[] getPreview(Long pdfId) {
-        byte[] pdfData = pdfStorageService.getPdfById(pdfId);
-        return pdfRenderingService.renderFirstPageAsJpeg(pdfData);
-    }
+	public byte[] getPreview(Long pdfId) {
+		byte[] pdfData = pdfStorageService.getPdfById(pdfId);
+		return pdfRenderingService.renderFirstPageAsJpeg(pdfData);
+	}
 
 //    public byte[] stampPdf(Long pdfId, StampData stamp) {
 //        byte[] pdfData = pdfStorageService.getPdfById(pdfId);
@@ -72,31 +71,74 @@ public class PdfServiceFacade {
 //        return pdfRenderingService.renderFirstPageAsJpeg(stampedPdf);
 //    }
 
-     //Method to stamp the PDF with text (as a watermark or stamp)
-    public byte[] stampPdf(Long pdfId, StampData stampData) throws IOException {
-        byte[] pdfData = pdfStorageService.getPdfById(pdfId);  // Get PDF data
+	// Method to stamp the PDF with text (as a watermark or stamp)
+//	public byte[] stampPdf(Long pdfId, StampData stampData) throws IOException {
+//		byte[] pdfData = pdfStorageService.getPdfById(pdfId);  // Get PDF data
+//
+//		try (PDDocument document = PDDocument.load(pdfData)) {
+//			int pageCount = document.getNumberOfPages();
+//			PDPage lastPage = document.getPage(pageCount - 1); // Get last page
+//
+//			try (PDPageContentStream contentStream = new PDPageContentStream(document, lastPage, PDPageContentStream.AppendMode.APPEND, true, true)) {
+//				contentStream.beginText();
+//				contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+//				contentStream.newLineAtOffset(50, 30);
+//				String stampText = "Date: " + stampData.getDate() + " | Name: " + stampData.getName() + " | Comment: " + stampData.getComment();
+//				contentStream.showText(stampText);
+//				contentStream.endText();
+//			}
+//
+//			// **Generate a dynamic file name**
+//			String fileName = "stamped_pdf_" + pdfId + "_" + System.currentTimeMillis() + ".pdf";
+//			String saveDirectory = "Path\\to\\storage";  // Update this to your required directory
+//			String filePath = saveDirectory + fileName;
+//
+//			// **Save the document with dynamic name**
+//			document.save(filePath); // Save to disk
+//
+//			// Save to a byte array (if needed for response)
+//			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//			document.save(outputStream);
+//			return outputStream.toByteArray();
+//		} catch (IOException e) {
+//			throw new RuntimeException("Error applying stamp to PDF", e);
+//		}
+//	}
 
-        try (PDDocument document = PDDocument.load(pdfData)) {
-            PDPage page = document.getPage(0); // Assuming we stamp the first page
 
-            // Prepare the content stream to add text to the PDF
-            PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
-            contentStream.beginText();
-            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
-            contentStream.newLineAtOffset(50, 50);  // Position of the stamp on the page (x, y)
-            String stampText = "Date: " + stampData.getDate() + " | Name: " + stampData.getName() + " | Comment: " + stampData.getComment();
-            contentStream.showText(stampText);  // Add the stamp text
-            contentStream.endText();
-            contentStream.close();
+	public byte[] stampPdf(Long pdfId, StampData stampData) throws IOException {
+		byte[] pdfData = pdfStorageService.getPdfById(pdfId);  // Get PDF data
 
-            // Save the document to a byte array
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            document.save(outputStream);
-            return outputStream.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException("Error applying stamp to PDF", e);
-        }
-    }
+		try (PDDocument document = PDDocument.load(pdfData)) {
+			int pageCount = document.getNumberOfPages();
+			PDPage lastPage = document.getPage(pageCount - 1); // Get last page
+
+			try (PDPageContentStream contentStream = new PDPageContentStream(document, lastPage, PDPageContentStream.AppendMode.APPEND, true, true)) {
+				contentStream.beginText();
+				contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+				contentStream.newLineAtOffset(50, 30);
+				String stampText = "Date: " + stampData.getDate() + " | Name: " + stampData.getName() + " | Comment: " + stampData.getComment();
+				contentStream.showText(stampText);
+				contentStream.endText();
+			}
+
+			// *Generate a dynamic file name*
+			String fileName = "stamped_pdf_" + pdfId + "_" + System.currentTimeMillis() + ".pdf";
+			String saveDirectory = System.getProperty("user.home") + "/Desktop/";
+			;  // Update this to your required directory
+			String filePath = saveDirectory + fileName;
+
+			// *Save the document with dynamic name*
+			document.save(filePath); // Save to disk
+
+			// Save to a byte array (if needed for response)
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			document.save(outputStream);
+			return outputStream.toByteArray();
+		} catch (IOException e) {
+			throw new RuntimeException("Error applying stamp to PDF", e);
+		}
+	}
 
 //    @PostMapping("/{id}/stamp")
 //    public ResponseEntity<byte[]> stampPdf(@PathVariable("id") Long pdfId, @RequestBody StampData stampData) {
@@ -111,12 +153,14 @@ public class PdfServiceFacade {
 //        }
 //    }
 
-    public byte[] downloadPdf(String pdfId) {
-        return pdfStorageService.getPdfById(Long.parseLong(pdfId));
-    }
+	public byte[] downloadPdf(String pdfId) {
+		return pdfStorageService.getPdfById(Long.parseLong(pdfId));
+	}
 
-    public void deletePdf(Long pdfId) {
-        pdfStorageService.deletePdf(pdfId);
-    }
+	public void deletePdf(Long pdfId) {
+		pdfStorageService.deletePdf(pdfId);
+	}
 
 }
+
+
