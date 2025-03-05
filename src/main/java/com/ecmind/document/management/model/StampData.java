@@ -5,7 +5,6 @@ public class StampData {
     private String name;
     private String comment;
 
-    // Getters and setters
     public String getDate() {
         return date;
     }

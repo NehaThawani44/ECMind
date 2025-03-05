@@ -22,9 +22,6 @@ public class PdfController {
     @Autowired
     private PdfStorageService pdfStorageService;
 
-
-
-    // Upload a PDF file
     @PostMapping("/upload")
     public ResponseEntity<String> uploadPdf(@RequestParam("file") MultipartFile file) {
         try {
@@ -35,13 +32,11 @@ public class PdfController {
         }
     }
 
-    // List all uploaded PDFs
     @GetMapping
     public List<PdfMetadata> listPdfs() {
         return pdfServiceFacade.listPdfs();
     }
 
-    // Render the first page as a JPEG preview
     @GetMapping("/{id}/preview")
     public ResponseEntity<byte[]> getPreview(@PathVariable("id") Long pdfId) {
         byte[] jpegData = pdfServiceFacade.getPreview(pdfId);
@@ -50,16 +45,7 @@ public class PdfController {
                 .body(jpegData);
     }
 
-    // Stamp the PDF and return a new JPEG preview with the stamp applied
-//    @PostMapping("/{id}/stamp")
-//    public ResponseEntity<byte[]> stampPdf(@PathVariable("id") Long pdfId, @RequestBody StampData stampData) {
-//        byte[] jpegData = pdfServiceFacade.stampPdf(pdfId, stampData);
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_JPEG_VALUE)
-//                .body(jpegData);
-//    }
 
-    // Endpoint to stamp a PDF with a watermark
     @PostMapping("/{id}/stamp")
     public ResponseEntity<byte[]> stampPdf(@PathVariable("id") Long pdfId, @RequestBody StampData stampData) {
         try {
@@ -72,7 +58,7 @@ public class PdfController {
                     .body(("Error: " + e.getMessage()).getBytes());  // Return error if anything goes wrong
         }
     }
-    // Download the PDF file
+
     @GetMapping("/{id}/download")
     public ResponseEntity<byte[]> downloadPdf(@PathVariable("id") String pdfId) {
         byte[] pdfData = pdfServiceFacade.downloadPdf(pdfId);
@@ -82,7 +68,6 @@ public class PdfController {
                 .body(pdfData);
     }
 
-    // Delete the PDF file
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePdf(@PathVariable("id") Long pdfId) {
         pdfServiceFacade.deletePdf(pdfId);
@@ -91,10 +76,8 @@ public class PdfController {
 
     @GetMapping("/{id}")
     public ResponseEntity<byte[]> getPdf(@PathVariable Long id) {
-        // Fetch the PDF file by id
         byte[] pdfData = pdfStorageService.getPdfById(id);  // Now this returns a byte[] not PdfMetadata
 
-        // Create the response
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDisposition(ContentDisposition.builder("inline").filename("file.pdf").build());

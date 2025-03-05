@@ -18,7 +18,6 @@ public class PdfStorageService {
     private PdfRepository pdfRepository;
 
 
-    // In‑memory storage for demo purposes
     private Map<String, byte[]> pdfStorage = new ConcurrentHashMap<>();
     private Map<String, PdfMetadata> metadataStorage = new ConcurrentHashMap<>();
 
@@ -36,21 +35,14 @@ public class PdfStorageService {
     }
 
     public List<PdfMetadata> getAllPdfs() {
-        //return new ArrayList<>(metadataStorage.values());
+
         return pdfRepository.findAll();
     }
-
-//    public byte[] getPdfById(String pdfId) {
-//        Long id = Long.parseLong(pdfId);
-//        PdfMetadata entity = pdfRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("PDF not found with id: " + pdfId));
-//        return entity.getData();
-//    }
 
 
     public byte[] getPdfById(Long pdfId) {
         try {
-            //Long id = Long.parseLong(pdfId);
+
             PdfMetadata entity = pdfRepository.findById(pdfId)
                     .orElseThrow(() -> new PdfNotFoundException("PDF not found with id: " + pdfId));
             return entity.getData();

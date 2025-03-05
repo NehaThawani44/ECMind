@@ -18,10 +18,7 @@ public class PdfMetadata {
     @Temporal(TemporalType.TIMESTAMP)
     private Date uploadDate;
 
-    /**
-     * Optional: Store the PDF file data in the database as a BLOB.
-     * If files are large, consider storing only a file path or reference instead.
-     */
+
     @Lob
     private byte[] data;
 
@@ -34,7 +31,6 @@ public class PdfMetadata {
         this.data = data;
     }
 
-    // Getters and setters
     public Long getId() {
         return id;
     }
