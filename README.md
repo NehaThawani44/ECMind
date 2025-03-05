@@ -10,6 +10,9 @@ Download and delete PDFs, including any applied stamps.
 The backend is developed using Spring Boot, and the frontend is built with React.js.
 
 ## Project Structure
+
+![My Diagram](Low_Level_SystemDesign.png)
+
 ## Backend (Spring Boot)
 
 ```
@@ -26,7 +29,9 @@ backend/
 │   │   │   ├── PdfMetadata.java
 │   │   │   ├── StampData.java
 │   │   ├── repository/
+│   │   │   ├──PdfRepository.java
 │   │   ├── exception/
+│   │   │   ├─PdfNotFoundException.java      
 │   │   ├── ManagementApplication.java
 │   ├── resources/
 │   │   ├── application.properties
@@ -76,14 +81,13 @@ frontend/
 #### Backend (Spring Boot)
 1. Navigate to the backend directory:
 
-  
-
    ```
    cd backend
 
    ```
 
 2. Build and run the application:
+
 ```
 mvn clean install
 mvn spring-boot:run
@@ -117,20 +121,22 @@ npm start
 * Spring Boot
 * Spring Web
 * Spring Data JPA
-* PDFBox (for PDF manipulation)
+* PDFBox
 * Maven
+
 ### Frontend
 * React.js
 * Axios (for API requests)
 * React Router (for navigation)
+
 ### Database
-* PostgreSQL (or use H2 for testing)
+* MongoDB (or use H2 for testing)
 * AWS S3 (for cloud-based file storage, optional)
 
 ## Improvements & Future Enhancements
 * Implement user authentication (JWT-based login).
 * Use CDN caching for faster previews.
-* Store PDFs in AWS S3  Storage.
+* Store PDFs in AWS S3 Storage.
 * Add support for annotations and watermarking.
 
 
