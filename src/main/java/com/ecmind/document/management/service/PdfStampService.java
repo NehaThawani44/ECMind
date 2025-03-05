@@ -27,7 +27,13 @@ public class PdfStampService {
 
             PDPage page = document.getPage(0);
 
-            String stampText = "Date: " + stamp.getDate() + " | Name: " + stamp.getName() + " | Comment: " + stamp.getComment();
+            String stampText = new StringBuilder("Date: ")
+                    .append(stamp.getDate())
+                    .append(" | Name: ")
+                    .append(stamp.getName())
+                    .append(" | Comment: ")
+                    .append(stamp.getComment())
+                    .toString();
             logger.info("Applying stamp: {}", stampText);
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
                 contentStream.beginText();
