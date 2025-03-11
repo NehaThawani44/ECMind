@@ -1,31 +1,68 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 
 const PdfList = () => {
   const [pdfs, setPdfs] = useState([]);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
-    // Fetch list of PDFs from the backend API
+    fetchPdfs();
+  }, []);
+
+  const fetchPdfs = () => {
     axios.get('http://localhost:8080/api/pdfs')
       .then(response => {
-        setPdfs(response.data); // Set the PDFs to state
+        console.log('PDF data from backend:', response.data);
+        setPdfs(response.data);
       })
       .catch(error => {
         console.error('Error fetching PDFs:', error);
       });
-  }, []);
+  };
+
+  const openFileDialog = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    console.log("File selected:", file);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    axios.post('http://localhost:8080/api/pdfs/upload', formData)
+      .then(response => {
+        console.log("File uploaded successfully:", response.data);
+        // Re-fetch the PDFs
+        fetchPdfs();
+      })
+      .catch(error => {
+        console.error("Error uploading file:", error);
+      });
+  };
 
   return (
     <div>
       <h1>Uploaded PDFs</h1>
-      <button onClick={() => console.log("Open file upload dialog")}>Add New File</button>
+      <button onClick={openFileDialog}>Add New File</button>
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+
       <ul>
         {pdfs.length === 0 ? (
           <li>No PDFs uploaded yet.</li>
         ) : (
           pdfs.map((pdf) => (
             <li key={pdf.id}>
-              {pdf.name} {/* Assuming pdf has 'id' and 'name' properties */}
+              {/* If your backend returns "filename", replace "pdf.name" with "pdf.filename" */}
+              {pdf.name}
             </li>
           ))
         )}
