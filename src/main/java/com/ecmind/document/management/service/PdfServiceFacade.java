@@ -8,11 +8,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
@@ -37,8 +33,9 @@ public class PdfServiceFacade {
     @Autowired
     private PdfRepository pdfRepository;
 
-    public void uploadPdf(MultipartFile file) {
+    public String uploadPdf(MultipartFile file) {
         pdfUploadService.upload(file);
+        return "";
     }
 
     public List<PdfMetadata> listPdfs() {

@@ -11,3 +11,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+/* In PdfList.css */
+li {
+  width: auto;
+  white-space: normal;
+  overflow: visible;
+}
+

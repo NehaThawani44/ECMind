@@ -10,7 +10,9 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pdfs")
@@ -23,12 +25,20 @@ public class PdfController {
     private PdfStorageService pdfStorageService;
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadPdf(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Map<String, Object>> uploadPdf(@RequestParam("file") MultipartFile file) {
         try {
-            pdfServiceFacade.uploadPdf(file);
-            return ResponseEntity.ok("File uploaded successfully.");
+            // Assume your service returns the saved file name or a database ID
+            String savedFileName = pdfServiceFacade.uploadPdf(file);
+
+            // Build a JSON response
+            Map<String, Object> response = new HashMap<>();
+            response.put("filename", savedFileName);
+            response.put("message", "File uploaded successfully.");
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error uploading file: " + e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Error uploading file: " + e.getMessage()));
         }
     }
 

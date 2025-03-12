@@ -55,18 +55,16 @@ const PdfList = () => {
         onChange={handleFileChange}
       />
 
-      <ul>
-        {pdfs.length === 0 ? (
-          <li>No PDFs uploaded yet.</li>
-        ) : (
-          pdfs.map((pdf) => (
-            <li key={pdf.id}>
-              {/* If your backend returns "filename", replace "pdf.name" with "pdf.filename" */}
-              {pdf.name}
-            </li>
-          ))
-        )}
-      </ul>
+     <ul>
+       {pdfs.length === 0 ? (
+         <li>No PDFs uploaded yet.</li>
+       ) : (
+         pdfs.map((pdf) => ( 
+          <li key={pdf.id}>{pdf.fileName}</li>
+         ))
+      
+       )}
+     </ul>
     </div>
   );
 };

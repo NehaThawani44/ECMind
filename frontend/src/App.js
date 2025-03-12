@@ -10,7 +10,7 @@ function App() {
         {/* Use Routes instead of Switch */}
         <Routes>
           <Route path="/" element={<PdfList />} />
-          <Route path="/pdf/:id" element={<PdfManager />} />
+          <Route path="/pdfs/:id" element={<PdfManager />} />
         </Routes>
       </div>
     </Router>
